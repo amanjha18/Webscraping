@@ -1,14 +1,31 @@
-import requests,pprint, json,os,random
+#	 IMDB SCRAPER(Internet movie database)
+
+import requests
+## Make requests using the most common HTTP methods
+import pprint 
+## The pprint module provides a capability to “pretty-print” 
+import json
+## JSON (JavaScript Object Notation) is a lightweight format that is used for data interchanging.
+import os
+## The os and os.path modules include many functions to interact with the file system.
 import time
+## Python time sleep function is used to add delay in the execution of a program. 
+## We can use python sleep function to halt the execution of the program for given time in seconds.
+import random 
+## We want the computer to pick a random number in a given range
 from bs4 import BeautifulSoup
+## Beautiful Soup is a Python library for pulling data out of HTML and XML files. 
 
 # ---------------------------------TASK-1------------------------------------------------------------------------------------#
+## In this task, I have scraped the details of all the 250 movies,
+#  according to their position, name, year, rating, and movie url.
+
 def scrape_top_list():
-	time.sleep(random.randint(10,60))
 	url="https://www.imdb.com/india/top-rated-indian-movies/"
 	page=requests.get(url)
 	soup=page.text
 	parser=BeautifulSoup(soup,"html.parser")
+	# HTMLParser which serves as the basis for parsing text files formatted in HTML 
 	lister=parser.find("div",class_="lister")
 	tbody=lister.find("tbody",class_="lister-list")
 	trs=tbody.findAll("tr")
@@ -51,40 +68,46 @@ scrapped=scrape_top_list()
 
 
 # #--------------------------------------TASK-2-------------------------------------------------------#
-#
-# def group_by_year(movies):
-# 	year_dic={}
-# 	for movie in movies:
-# 		year=movie['year']
-# 		# print year
-# 		year_dic[year]=[]
-# 	# return(year_dic)
-# 		for mov in movies:
-# 			if mov["year"]==year:
-# 				year_dic[year].append(mov)
-# 	return year_dic
-# # pprint.pprint(group_by_year(scrapped))
-# task2=group_by_year(scrapped)
-#
-# # #----------------------------------------TASK-3--------------------------------------------------#
-#
-# def group_by_decade(movies):
-# 	dic={}
-# 	for decade in range(1950,2020,10):
-# 		lister=[]
-# 		for dec in range(decade,decade+10):
-# 			mainDic={}
-# 			for new_dec in range(len(movies)):
-# 				yearDic=movies[new_dec]['year']
-# 				if yearDic==dec:
-# 					mainDic=movies[new_dec]
-# 					lister.append(mainDic)
-# 		dic[decade] = lister
-# 	return dic
-# # pprint.pprint(group_by_decade(scrapped))
-# task3=group_by_decade(scrapped)
-#
+## In this task, I have arranged all the movies, according to their years of release.
+
+def group_by_year(movies):
+	year_dic={}
+	for movie in movies:
+		year=movie['year']
+		# print year
+		year_dic[year]=[]
+	# return(year_dic)
+		for mov in movies:
+			if mov["year"]==year:
+				year_dic[year].append(mov)
+	return year_dic
+# pprint.pprint(group_by_year(scrapped))
+task2=group_by_year(scrapped)
+
+# #----------------------------------------TASK-3--------------------------------------------------#
+## In this task, I have arranged all the movies according to the decades,
+## means arranged after every 10 years.
+
+def group_by_decade(movies):
+	dic={}
+	for decade in range(1950,2020,10):
+		lister=[]
+		for dec in range(decade,decade+10):
+			mainDic={}
+			for new_dec in range(len(movies)):
+				yearDic=movies[new_dec]['year']
+				if yearDic==dec:
+					mainDic=movies[new_dec]
+					lister.append(mainDic)
+		dic[decade] = lister
+	return dic
+# pprint.pprint(group_by_decade(scrapped))
+task3=group_by_decade(scrapped)
+
 # #-----------------------------------------------TASK-4----------------------------------------------#
+## In this task, by giving the movie_url, you can have access to the directors, country, 
+# languages, runtime of a particular movie.
+
 def scrape_movie_details(link):
 	# one_link="https://www.imdb.com/title/tt3417422/"
 	page=requests.get(link)
@@ -153,88 +176,94 @@ def scrape_movie_details(link):
 	}
 
 	return dic4
-# pprint.pprint(scrape_movie_details(data))
+# pprint.pprint(scrape_movie_details('https://www.imdb.com/title/tt3417422/'))
 
 
 
 # ##--------------------------------------------TASK-5----------------------------------------------------------##
-#
+## In this task, you can access the directors, languages, country etc. of all the 250 movies
+
+# total_movie_list = []
 # def movie_list_details(a):
-#
 # 	for i in range(len(a)):
 # 		data = (scrape_movie_details(a[i]['url']))
-# 		return (data)
-# pprint.pprint(movie_list_details(scrapped))
-# task5=(movie_list_details()
-# #
-# total_movie_data = movie_list_details(scrapped)
-# pprint.pprint(total_movie_data)
+# 		pprint.pprint(data)
+# 		print (i)
+# 		total_movie_list.append(data)
+# (movie_list_details(scrapped))
+
 # with open('total_movie.json', 'w') as file:
-# 	json = json.dumps(total_movie_data)
+# 	json = json.dumps(total_movie_list, indent=4, sort_keys=False)
 # 	file.write(json)
+
 ##-------------------------------------TASK-6-----------------------##
-# with open("total_movie.json","r") as f:
-# 	movie_list_json=json.load(f)
-# def analyse_movies_(movie_list):
-# 	lan_list=[]
-# 	dic={}
-# 	for i in movie_list[0:10]:
-# 		lan=i["language"]
-# 		for j in lan:
-# 			if j not in lan_list:
-# 				lan_list.append(j)
-# 		# print (lan_list)
-# 	for k in lan_list:
-# 		count=0
-# 		for i in movie_list[0:10]:
-# 			lan=i["language"]
-# 			if k in lan:
-# 				count=count+1
-# 		dic[k]=count
-# 	return (dic)
-# # langueses=pprint.pprint (analyse_movies_(movie_list_json))
-#
+## In this task, I have counted all the movies that have been released in Hindi, 
+## English and Malayalam languages.
+
+with open("total_movie.json","r") as f:
+	movie_list_json=json.load(f)
+def analyse_movies_(movie_list):
+	lan_list=[]
+	dic={}
+	for i in movie_list:
+		lan=i["language"]
+		for j in lan:
+			if j not in lan_list:
+				lan_list.append(j)
+		# print (lan_list)
+	for k in lan_list:
+		count=0
+		for i in movie_list[0:10]:
+			lan=i["language"]
+			if k in lan:
+				count=count+1
+		dic[k]=count
+	return (dic)
+langueses=pprint.pprint (analyse_movies_(movie_list_json))
+
 # ##---------------------------------------TASK-7-----------------------------##
-# with open("total_movie.json", "r") as f:
-# 	movie_dir=json.load(f)
-# def analyse_movies_directors(movie_list):
-# 	dir_list=[]
-# 	dic={}
-# 	for dir in movie_list[0:10]:
-# 		director=dir["director"]
-# 		# print (director)
-# 		for i in director:
-# 			# print (i)
-# 			if i not in dir_list:
-# 				dir_list.append(i)
-# 		# return (dir_list)
-# 	for new_dir in dir_list:
-# 		count=0
-# 		for dir in movie_list[0:10]:
-# 			director=dir["director"]
-# 			if new_dir in director:
-# 				count=count+1
-# 		dic[new_dir]=count
-# 	return (dic)
+## In this task, I have counted all the movies that have been released by a particular director.
+
+with open("total_movie.json", "r") as f:
+	movie_dir=json.load(f)
+def analyse_movies_directors(movie_list):
+	dir_list=[]
+	dic={}
+	for dir in movie_list:
+		director=dir["director"]
+		# print (director)
+		for i in director:
+			# print (i)
+			if i not in dir_list:
+				dir_list.append(i)
+		# return (dir_list)
+	for new_dir in dir_list:
+		count=0
+		for dir in movie_list:
+			director=dir["director"]
+			if new_dir in director:
+				count=count+1
+		dic[new_dir]=count
+	return (dic)
 # pprint.pprint(analyse_movies_directors(movie_dir))
 # ##---------------------------------------TASK-8 AND TASK-9----------------------------##
-# def catching(param):
-	# new_list=[]
-	# random_sleep=random.randint(1, 3) # task-9
-	# for i in param:
-	# 	data=i["url"]
-	# 	# print (data)
-	# 	new_list.append(data)
-	# # print new_list
-	# for j in new_list:
-	# 	movie_id=(j[27:-1])+".json"
-	# 	time.sleep(random_sleep) #task-9
-	# 	print (random_sleep)
-	# 	if not(os.path.exists(movie_id)):
-	# 		with open(movie_id, "w") as f:
-	# 			parser=scrape_movie_details(data)
-	# 			datas=json.dumps(parser)
-	# 			f.write(datas)
+def catching(param):
+	new_list=[]
+	random_sleep=random.randint(1, 3) # task-9
+	for i in param:
+		data=i["url"]
+		# print (data)
+		new_list.append(data)
+	# print new_list
+	for j in new_list:
+		movie_id=(j[27:-1])+".json"
+		time.sleep(random_sleep) #task-9
+		# print (random_sleep)
+		if not(os.path.exists(movie_id)):
+			with open(movie_id, "w") as f:
+				parser=scrape_movie_details(data)
+				datas=json.dumps(parser)
+				f.write(datas)
 # pprint.pprint (catching(scrape_top_list()))
 
 ##----------------------------------------TASK-10--------------------------##
@@ -336,13 +365,13 @@ def scrape13():
 			movie_list.append(file_load)
 	return(movie_list)
 # pprint.pprint(scrape13())
-scrape15=(scrape13())
+# scrape14=(scrape13())
 
 ##-------------------------------- TASK-14 ----------------------------------------
 def analyse_actors():
 	dic1={}
 	dic2={}
-	for i in scrape15:
+	for i in scrape14:
 		cast=i["cast"]
 		for j in cast:
 			id=j["imdb_id"]
@@ -351,10 +380,10 @@ def analyse_actors():
 			else:
 				dic1[id]=1
 	for i in dic1:
-		for j in scrape15:
+		for j in scrape14:
 			cast=j["cast"]
 			for k in cast:
 				if i==k["imdb_id"] and i not in dic2:
 					dic2[i]={"name":k["name"],"num_movies":dic1[i]}
-	print (dic2)						
+	print (dic2)
 analyse_actors()
